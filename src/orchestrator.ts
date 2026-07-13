@@ -46,7 +46,7 @@ export class ClaudeClawOrchestrator {
 
       if (!result.success) {
         task.status = 'failed'
-        task.error = result.error
+        task.error = result.error || 'Unknown error'
         break
       }
     }

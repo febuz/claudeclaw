@@ -22,7 +22,7 @@ async function main(): Promise<void> {
     .command(
       'agent:register <id> <role> <model>',
       'Register a new agent',
-      (y) =>
+      (y: any) =>
         y
           .positional('id', { describe: 'Agent ID', type: 'string' })
           .positional('role', {
@@ -31,7 +31,7 @@ async function main(): Promise<void> {
             type: 'string',
           })
           .positional('model', { describe: 'Claude model to use', type: 'string' }),
-      (argv) => {
+      (argv: any) => {
         const agent: Agent = {
           id: argv.id as string,
           role: argv.role as 'coordinator' | 'coder' | 'reviewer' | 'researcher',
@@ -44,7 +44,7 @@ async function main(): Promise<void> {
     .command(
       'task:add <title>',
       'Add a task to the queue',
-      (y) =>
+      (y: any) =>
         y
           .positional('title', { describe: 'Task title', type: 'string' })
           .option('description', { describe: 'Task description', type: 'string', default: '' })
@@ -59,7 +59,7 @@ async function main(): Promise<void> {
             default: 'medium',
             type: 'string',
           }),
-      (argv) => {
+      (argv: any) => {
         const task: Task = {
           id: `task-${Date.now()}`,
           title: argv.title as string,
@@ -77,7 +77,7 @@ async function main(): Promise<void> {
       'queue:process',
       'Process all tasks in the queue',
       {},
-      async (argv) => {
+      async (argv: any) => {
         try {
           await orchestrator.processQueue()
           const state = orchestrator.getState()
@@ -93,8 +93,8 @@ async function main(): Promise<void> {
     .command(
       'state:export <filename>',
       'Export orchestration state to JSON',
-      (y) => y.positional('filename', { describe: 'Output filename', type: 'string' }),
-      (argv) => {
+      (y: any) => y.positional('filename', { describe: 'Output filename', type: 'string' }),
+      (argv: any) => {
         const state = orchestrator.getState()
         const output = {
           ...state,

@@ -29,6 +29,7 @@ export interface AgentResult {
     output: number
   }
   success: boolean
+  error?: string
 }
 
 export interface ToolCall {
