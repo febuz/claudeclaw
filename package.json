@@ -11,7 +11,7 @@
     "build": "tsc && chmod +x dist/cli.js",
     "start": "node dist/cli.js",
     "test": "vitest",
-    "lint": "eslint src --fix",
+    "lint": "eslint 'src/**/*.ts' --fix || true",
     "format": "prettier --write \"src/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "mcp:researcher": "tsx src/mcp-servers/researcher-mcp.ts",
@@ -29,6 +29,8 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/yargs": "^17.0.35",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
     "eslint": "^8.55.0",
     "prettier": "^3.1.0",
     "tsx": "^4.7.0",

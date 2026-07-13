@@ -81,9 +81,9 @@ async function main(): Promise<void> {
         try {
           await orchestrator.processQueue()
           const state = orchestrator.getState()
-          console.log('Queue processing completed')
-          console.log(`Total tasks: ${state.results.length}`)
-          console.log(`Duration: ${new Date().getTime() - state.startTime.getTime()}ms`)
+          logger.info('Queue processing completed')
+          logger.info(`Total tasks: ${state.results.length}`)
+          logger.info(`Duration: ${new Date().getTime() - state.startTime.getTime()}ms`)
         } catch (error) {
           logger.error(error, 'Queue processing failed')
           process.exit(1)
