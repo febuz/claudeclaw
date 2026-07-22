@@ -7,6 +7,7 @@ import { ClaudeClawOrchestrator } from './orchestrator.js'
 import { Agent, Task } from './types.js'
 import * as fs from 'fs'
 import * as path from 'path'
+import { randomUUID } from 'node:crypto'
 
 const logger = pino()
 
@@ -70,7 +71,7 @@ async function main(): Promise<void> {
           }),
       (argv: any) => {
         const task: Task = {
-          id: `task-${Date.now()}`,
+          id: `task-${randomUUID()}`,
           title: argv.title as string,
           description: argv.description as string,
           requiredAgents: (argv.agents as string).split(',').map((a) => a.trim()),
