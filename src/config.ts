@@ -7,9 +7,9 @@ const logger = pino()
 
 const ConfigSchema = z.object({
   orchestrator: z.object({
-    maxConcurrentAgents: z.number().default(4),
-    taskTimeoutMs: z.number().default(300000),
-    retryAttempts: z.number().default(3),
+    maxConcurrentAgents: z.number().int().min(1).max(32).default(4),
+    taskTimeoutMs: z.number().int().min(1000).max(86_400_000).default(300000),
+    retryAttempts: z.number().int().min(0).max(10).default(3),
   }),
   agents: z.object({
     coordinator: z.object({
@@ -31,11 +31,11 @@ const ConfigSchema = z.object({
   }),
   mcp: z.object({
     researcher: z.object({
-      port: z.number().default(3001),
+      port: z.number().int().min(1024).max(65535).default(3001),
       enabled: z.boolean().default(true),
     }),
     skills: z.object({
-      port: z.number().default(3002),
+      port: z.number().int().min(1024).max(65535).default(3002),
       enabled: z.boolean().default(true),
     }),
   }),
@@ -87,9 +87,10 @@ export class ConfigManager {
   saveConfig(): void {
     const dir = path.dirname(this.configPath)
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
+      fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
     }
-    fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2))
+    fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2), { mode: 0o600 })
+    fs.chmodSync(this.configPath, 0o600)
     logger.info({ configPath: this.configPath }, 'Config saved')
   }
 
@@ -114,6 +115,10 @@ export class ConfigManager {
   }
 
   static export(config: Config): string {
-    return JSON.stringify(config, null, 2)
+    const safeConfig = {
+      ...config,
+      codex: { ...config.codex, apiKey: config.codex.apiKey ? '[REDACTED]' : undefined },
+    }
+    return JSON.stringify(safeConfig, null, 2)
   }
 }

@@ -10,6 +10,15 @@ import * as path from 'path'
 
 const logger = pino()
 
+function safeExportPath(filename: string): string {
+  const resolved = path.resolve(filename)
+  const root = path.resolve(process.cwd()) + path.sep
+  if (!resolved.startsWith(root)) {
+    throw new Error('state export path must remain inside the current working directory')
+  }
+  return resolved
+}
+
 interface CLIContext {
   orchestrator: ClaudeClawOrchestrator
 }
@@ -103,8 +112,10 @@ async function main(): Promise<void> {
             ...r,
           })),
         }
-        fs.writeFileSync(argv.filename as string, JSON.stringify(output, null, 2))
-        logger.info({ file: argv.filename }, 'State exported')
+        const outputPath = safeExportPath(argv.filename as string)
+        fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), { mode: 0o600 })
+        fs.chmodSync(outputPath, 0o600)
+        logger.info({ file: outputPath }, 'State exported')
       }
     )
     .option('verbose', {
